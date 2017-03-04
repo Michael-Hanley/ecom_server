@@ -1,20 +1,35 @@
 var Images = require('../models/imageModel');
 var bodyParser = require('body-parser');
-
+//  MOLTIN
+var moltin = require('moltin')({
+  publicId: 'kHSvM9oGeuM088oRvUlA6EIcszABFNDlE0cMyDP8ap',
+  secretKey: 'uMl5ET5O3zI7J2zbIW9Up9sGSEuV3i74pGtsovpAUm'
+});
+//
 module.exports = function(app){
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
-    
-    
-    app.get('/api/Images/:uname', function(req,res) {
 
+
+
+    app.get('/api/Images/:uname', function(req,res) {
         Images.find({},
         function(err, Images){
             if (err) throw err;
             res.send(Images);
         });
     });
-
+//  MOLTIN
+    moltin.Authenticate(function() {   
+        app.get('/api/product', function(req,res) {
+            moltin.Product.Find({slug: 'test-item'}, function(product) {
+                console.log(product);
+                }, function(error) {
+                console.log(error);
+                }); 
+            });
+        });
+//
     app.get('api/Images/:id', function(req, res){
         Images.findById({ _id: req.params.id }, function(err, todo){
             if(err) throw err;
